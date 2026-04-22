@@ -1,40 +1,51 @@
 #include "mbed.h"
-#include <chrono>
+#include "classes/RoverDriver.h"
+#include "classes/UltrasonicSensor.h"
 
-DigitalOut trig(PA_9);
-DigitalIn echo(PA_8);
+RoverDriver rover(D10, D9, 1445, 1460, 60);
+UltrasonicSensor sensor(D7, D6, 200);
 
-Timer timer;
+const int OBSTACLE_THRESHOLD_CM = 15;
 
-int main() {
-    printf("Ultrasonic Sensor Test\r\n");
+int main()
+{
+    printf("Rover starting...\n");
+
+    rover.stop();
+    ThisThread::sleep_for(2s);
 
     while (true) {
-        // Ensure trigger is low
-        trig = 0;
-        wait_us(2);
+        int distance = sensor.pingCm();
 
-        // Send 10us pulse
-        trig = 1;
-        wait_us(10);
-        trig = 0;
+        if (distance < 0) {
+            printf("Sensor timeout\n");
+            rover.stop();
+            ThisThread::sleep_for(300ms);
+        }
+        else {
+            printf("Distance: %d cm\n", distance);
 
-        // Wait for echo to go HIGH
-        while (echo == 0);
+            if (distance > OBSTACLE_THRESHOLD_CM) {
+                rover.forward();
+            }
+            else {
+                rover.stop();
+                ThisThread::sleep_for(300ms);
 
-        timer.reset();
-        timer.start();
+                rover.reverse();
+                ThisThread::sleep_for(700ms);
 
-        // Wait for echo to go LOW
-        while (echo == 1);
+                rover.stop();
+                ThisThread::sleep_for(300ms);
 
-        timer.stop();
+                rover.turnRight();
+                ThisThread::sleep_for(700ms);
 
-        float time = timer.read(); // seconds
-        float distance = (time * 34300.0f) / 2.0f;
+                rover.stop();
+                ThisThread::sleep_for(300ms);
+            }
+        }
 
-        printf("Distance: %.2f cm\r\n", distance);
-
-        ThisThread::sleep_for(500);
+        ThisThread::sleep_for(100ms);
     }
 }

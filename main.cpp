@@ -5,7 +5,11 @@
 RoverDriver rover(D10, D9, 1445, 1460, 60);
 UltrasonicSensor sensor(D7, D6, 200);
 
+DigitalIn button(D8, PullUp);
+
 const int OBSTACLE_THRESHOLD_CM = 15;
+bool running = false;
+bool last_state = 1;
 
 int main()
 {
@@ -15,6 +19,25 @@ int main()
     ThisThread::sleep_for(2s);
 
     while (true) {
+
+        bool currentState = button.read();
+
+        //detect button press
+        if (currentState == 0 && last_state == 1) {
+            running = !running;  
+            printf("Running: %d\n", running);   //print if running
+            ThisThread::sleep_for(200ms); 
+        }
+
+        last_state = currentState;  
+
+        //if button = 0, do nothing
+        if (!running) {
+            rover.stop();
+            ThisThread::sleep_for(50ms);
+            continue;
+        }
+
         int distance = sensor.pingCm();
 
         if (distance < 0) {

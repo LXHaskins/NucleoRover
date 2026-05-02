@@ -1,15 +1,14 @@
 #include "mbed.h"
 #include "classes/RoverDriver.h"
 #include "classes/UltrasonicSensor.h"
+#include "classes/ButtonController.h"
 
 RoverDriver rover(D10, D9, 1445, 1460, 60);
 UltrasonicSensor sensor(D7, D6, 200);
-
-DigitalIn button(D8, PullUp);
+ButtonController button(D8);
 
 const int OBSTACLE_THRESHOLD_CM = 15;
 bool running = false;
-bool last_state = 1;
 
 int main()
 {
@@ -20,18 +19,12 @@ int main()
 
     while (true) {
 
-        bool currentState = button.read();
-
-        //detect button press
-        if (currentState == 0 && last_state == 1) {
-            running = !running;  
-            printf("Running: %d\n", running);   //print if running
-            ThisThread::sleep_for(200ms); 
+        if (button.wasPressed()) {
+            running = !running;
+            printf("Running: %d\n", running);
+            ThisThread::sleep_for(200ms);
         }
 
-        last_state = currentState;  
-
-        //if button = 0, do nothing
         if (!running) {
             rover.stop();
             ThisThread::sleep_for(50ms);

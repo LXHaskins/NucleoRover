@@ -3,7 +3,7 @@
 #include "classes/UltrasonicSensor.h"
 #include "classes/ButtonController.h"
 
-RoverDriver rover(D10, D9, 1445, 1460, 60);
+RoverDriver rover(D10, D9, 1476, 1467, 60);
 UltrasonicSensor sensor(D7, D6, 200);
 ButtonController button(D8);
 
@@ -22,7 +22,7 @@ int main()
         if (button.wasPressed()) {
             running = !running;
             printf("Running: %d\n", running);
-            ThisThread::sleep_for(200ms);
+            ThisThread::sleep_for(150ms);
         }
 
         if (!running) {
@@ -33,35 +33,29 @@ int main()
 
         int distance = sensor.pingCm();
 
-        if (distance < 0) {
-            printf("Sensor timeout\n");
+        
+        printf("Distance: %d cm\n", distance);
+
+        if (distance > OBSTACLE_THRESHOLD_CM) {
+            rover.forward();
+        }
+        else {
+            rover.stop();
+            ThisThread::sleep_for(300ms);
+
+            rover.reverse();
+            ThisThread::sleep_for(700ms);
+
+            rover.stop();
+            ThisThread::sleep_for(300ms);
+
+            rover.turnRight();
+            ThisThread::sleep_for(700ms);
+
             rover.stop();
             ThisThread::sleep_for(300ms);
         }
-        else {
-            printf("Distance: %d cm\n", distance);
-
-            if (distance > OBSTACLE_THRESHOLD_CM) {
-                rover.forward();
-            }
-            else {
-                rover.stop();
-                ThisThread::sleep_for(300ms);
-
-                rover.reverse();
-                ThisThread::sleep_for(700ms);
-
-                rover.stop();
-                ThisThread::sleep_for(300ms);
-
-                rover.turnRight();
-                ThisThread::sleep_for(700ms);
-
-                rover.stop();
-                ThisThread::sleep_for(300ms);
-            }
-        }
-
+        
         ThisThread::sleep_for(100ms);
     }
 }

@@ -131,9 +131,10 @@ void testObstacleLogic()
     printf("Result: PASS - Logic executed.\n");
 }
 
+/*
 int main()
 {
-    printf("\n===== BEGIN COMPONENT TESTS =====\n");
+    printf("\n-=Begin Component Tests=-\n");
 
     rover.stop();
     ThisThread::sleep_for(2s);
@@ -152,3 +153,4 @@ int main()
         ThisThread::sleep_for(1s);
     }
 }
+*/

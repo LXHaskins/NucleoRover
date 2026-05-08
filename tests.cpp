@@ -1,4 +1,4 @@
-#include "mbed.h"
+/*#include "mbed.h"
 #include "classes/ButtonController.h"
 #include "classes/UltrasonicSensor.h"
 #include "classes/RoverDriver.h"
@@ -22,7 +22,7 @@ void testButton()
     }
 }
 
-// Test Ultrasonic Sensor
+// Test Ultrasonic Sensorg
 void testUltrasonic()
 {
     printf("\n[TEST 2] UltrasonicSensor::pingCm()\n");

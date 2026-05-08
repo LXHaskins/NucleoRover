@@ -3,7 +3,7 @@
 #include "classes/UltrasonicSensor.h"
 #include "classes/ButtonController.h"
 
-RoverDriver rover(D10, D9, 1476, 1467, 60);
+RoverDriver rover(D10, D9, 1455, 1466, 100);
 UltrasonicSensor sensor(D7, D6, 200);
 ButtonController button(D8);
 
@@ -22,7 +22,7 @@ int main()
         if (button.wasPressed()) {
             running = !running;
             printf("Running: %d\n", running);
-            ThisThread::sleep_for(150ms);
+            ThisThread::sleep_for(200ms);
         }
 
         if (!running) {
@@ -31,7 +31,10 @@ int main()
             continue;
         }
 
-        int distance = sensor.pingCm();
+        int distance = sensor.pingCm();        
+        if (distance < 0) { //-1 values no longer affect rover
+            continue;
+        }
 
         
         printf("Distance: %d cm\n", distance);

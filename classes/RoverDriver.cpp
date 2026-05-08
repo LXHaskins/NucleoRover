@@ -19,8 +19,8 @@ void RoverDriver::stop()
 void RoverDriver::forward()
 {
     // One servo runs opposite direction
-    leftServo.forward(speedStepUs);
-    rightServo.reverse(speedStepUs);
+    leftServo.forward(speedStepUs + leftTrim);
+    rightServo.reverse(speedStepUs + rightTrim);
 }
 
 // Move backward

@@ -32,6 +32,8 @@ private:
     ServoDriver leftServo;
     ServoDriver rightServo;
     int speedStepUs;
+    int leftTrim = 0;
+    int rightTrim = -8;
 };
 
 #endif
